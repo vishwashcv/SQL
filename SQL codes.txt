@@ -1,0 +1,346 @@
+SELECT 
+    replacement_cost,
+    COUNT(film_id) AS TITLE,
+	MIN(rental_rate) as minimum,
+    MAX(rental_rate) as Maximum,
+    AVG(rental_rate) as average
+FROM film
+GROUP BY replacement_cost;
+
+
+
+
+SELECT 
+    customer_id,
+    COUNT(rental_id) AS total_rentals
+FROM rental
+GROUP BY customer_id
+HAVING COUNT(rental_id) < 15;
+
+
+
+
+SELECT 
+    customer_id,
+    rental_id,
+    amount,
+    payment_date
+FROM payment
+ORDER BY amount DESC, customer_id DESC;
+
+
+SELECT 
+    title,
+    length,
+    rental_rate
+FROM film
+ORDER BY length DESC;
+
+
+
+
+USE mavenmovies;
+SELECT
+	first_name,
+    last_name,
+    CASE 
+		WHEN store_id = 1 AND active = 0 THEN "Store 1 Inactive"
+        WHEN store_id = 1 AND active = 1 THEN "Store 1 Active"
+        WHEN store_id = 2 AND active = 0 THEN "Store 2 Inactive"
+        WHEN store_id = 2 AND active = 1 THEN "Store 2 Active"
+        ELSE 'other'
+        END AS store_id
+FROM customer;
+
+
+
+
+SELECT
+store_id,
+COUNT(CASE WHEN active = 1 THEN customer_id ELSE NULL END) AS active,
+COUNT(CASE WHEN active = 0 THEN customer_id ELSE NULL END) AS inactive
+FROM customer GROUP BY store_id;
+
+
+
+
+
+
+
+
+
+Assignment of mid course project
+
+
+SELECT
+	first_name,
+	last_name,
+	email,
+	store_id
+FROM staff;
+
+
+SELECT
+store_id,
+COUNT(inventory_id) AS Inventory_items
+FROM inventory GROUP BY store_id;
+
+
+SELECT
+store_id,
+COUNT(customer_id) AS active_customers
+FROM customer WHERE active = 1 GROUP BY store_id;
+
+
+SELECT 
+	COUNT(email) AS Emails
+FROM customer;
+
+
+
+
+
+SELECT
+store_id,
+COUNT(DISTINCT film_id) AS Unique_films
+FROM inventory GROUP BY store_id;
+
+SELECT
+COUNT(DISTINCT name) AS Unique_categories
+FROM category;
+
+
+
+
+
+SELECT
+MIN(replacement_cost) AS leasti,
+AVG(replacement_cost) AS midd,
+MAX(replacement_cost) AS maximum
+FROM film;
+
+
+SELECT
+AVG(amount) AS avger,
+MAX(amount) AS maximum
+FROM payment;
+
+
+SELECT 
+	customer_id,
+    COUNT(rental_id) AS Rental_count
+FROM rental GROUP BY customer_id ORDER BY COUNT(rental_id) DESC;
+
+
+
+
+
+
+
+
+
+
+
+INNER JOIN
+SELECT DISTINCT
+title,
+description,
+	inventory.inventory_id,
+    store_id
+    FROM film 
+    INNER JOIN inventory
+    ON film.film_id = inventory.film_id
+    
+LIMIT 5000
+
+
+
+
+Bridging
+
+
+SELECT DISTINCT
+	actor.first_name,
+    actor.last_name,
+    film.title AS title
+    FROM actor 
+    INNER JOIN film_actor
+    ON actor.actor_id = film_actor.actor_id 
+    INNER JOIN film
+    ON film_actor.film_id = film.film_id
+    
+LIMIT 5000
+
+
+
+
+
+
+
+
+UNION
+
+SELECT 
+'advisor' AS type,
+first_name,
+last_name
+FROM advisor
+
+UNION
+
+SELECT 	
+'staff' AS type,
+first_name,
+last_name
+FROM staff
+	
+LIMIT 5000
+
+
+
+
+
+Mulitple conditions Join
+
+SELECT DISTINCT
+	film.title,
+    film.description
+    FROM film 
+    INNER JOIN inventory
+    ON film.film_id = inventory.film_id AND store_id = 2;
+
+
+
+
+
+
+
+FINAL PROJECT
+
+correct
+
+SELECT 
+ staff.first_name,
+ staff.last_name,
+ address.address,
+ city.city,
+ country.country
+FROM store
+LEFT JOIN staff ON store.store_id = staff.store_id
+LEFT JOIN address ON staff.address_id = address.address_id
+LEFT JOIN city ON address.city_id = city.city_id
+LEFT JOIN country ON city.country_id = country.country_id    
+LIMIT 5000
+
+
+
+
+
+
+
+
+SELECT 
+inventory.store_id,
+inventory.inventory_id,
+film.title,
+film.rating,
+film.rental_rate,
+film.replacement_cost
+FROM film
+LEFT JOIN inventory ON film.film_id = inventory.film_id
+
+
+
+
+
+
+
+SELECT 
+store_id,
+category.name,
+COUNT(inventory.inventory_id),
+AVG(film.replacement_cost),
+SUM(film.replacement_cost)
+
+FROM inventory
+LEFT JOIN film ON inventory.film_id = film.film_id
+LEFT JOIN film_category ON film.film_id = film_category.film_id
+LEFT JOIN category ON film_category.category_id = category.category_id
+
+GROUP BY store_id, category.name
+
+ORDER BY SUM(film.replacement_cost) DESC
+
+
+
+
+
+
+
+
+
+Correct
+
+SELECT
+customer.first_name,
+customer.last_name,
+customer.store_id,
+customer.active,
+address.address,
+city.city,
+country.country
+FROM customer
+LEFT JOIN address ON customer.address_id = address.address_id
+LEFT JOIN city ON address.city_id = city.city_id
+LEFT JOIN country ON city.country_id = country.country_id
+
+
+
+
+
+
+Correct
+
+SELECT
+'advisor' AS type,
+first_name,
+last_name,
+NULL
+FROM advisor
+
+UNION
+
+SELECT
+'investor' AS type,
+first_name,
+last_name,
+company_name
+FROM investor
+
+
+
+
+
+
+
+
+
+
+
+Almost DID
+SELECT
+CASE
+ WHEN actor_award.awards = 'Emmy, Oscar, Tony ' THEN '3 awards'
+ WHEN actor_award.awards IN ('Emmy, Oscar', 'Emmy, Tony', 'Oscar, Tony') THEN '2 awards'
+ ELSE '1 awards'
+ END AS num,
+ AVG(CASE WHEN actor_award.actor_id IS NULL THEN 0 ELSE 1 END) AS actor
+ 
+FROM actor_award
+
+GROUP BY
+CASE
+ WHEN actor_award.awards = 'Emmy, Oscar, Tony ' THEN '3 awards'
+ WHEN actor_award.awards IN ('Emmy, Oscar', 'Emmy, Tony', 'Oscar, Tony') THEN '2 awards'
+ ELSE '1 awards'
+ END
